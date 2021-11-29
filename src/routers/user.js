@@ -37,8 +37,7 @@ router.post("/user/login", async (req, res) => {
 // Sign out API
 router.post("/user/logout", auth, async (req, res) => {
   try {
-    console.log("HERE");
-    req.user.tokens = req.user.tokens.filter(
+    req.user.tokens = req.user.tokens?.filter(
       (token) => token.token !== req.token
     );
     await req.user.save();
