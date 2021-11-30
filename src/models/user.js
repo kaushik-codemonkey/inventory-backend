@@ -104,7 +104,7 @@ userSchema.methods.generateRefreshToken = async function () {
     { _id: user._id.toString() },
     process.env.RT_SECRET,
     {
-      expiresIn: process.env.RT_EXPIRY,
+      expiresIn: Number(process.env.RT_EXPIRY),
     }
   );
   user.refreshToken = refreshToken;
