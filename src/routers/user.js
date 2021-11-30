@@ -2,7 +2,7 @@ const express = require("express");
 const auth = require("../middleware/auth");
 const router = express.Router();
 const User = require("../models/user");
-
+const jwt = require("jsonwebtoken");
 //Sign up API - register user
 
 router.post("/user", async (req, res) => {
@@ -89,6 +89,22 @@ router.delete("/user", auth, async (req, res) => {
     res.send(req.user);
   } catch (e) {
     res.status(500).send();
+  }
+});
+//API to get access token using refreshToken
+router.get("/refresh", async (req, res) => {
+  try {
+    const refreshToken = req.query?.refreshToken;
+    if (!refreshToken) {
+      return res.status(400).send({ error: "Refresh Token required!" });
+    }
+    const decoded = jwt.verify(refreshToken, process.env.RT_SECRET);
+    let user = await User.findOne({ _id: decoded._id });
+    const newAuthToken = await user.generateAuthToken();
+    user.save();
+    return res.send({ token: newAuthToken, refreshToken });
+  } catch (error) {
+    res.status(500).send({ error });
   }
 });
 module.exports = router;
