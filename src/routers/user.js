@@ -82,5 +82,13 @@ router.patch("/user", auth, async (req, res) => {
     res.status(500).send(e);
   }
 });
-
+//API to delete a user
+router.delete("/user", auth, async (req, res) => {
+  try {
+    await req.user.remove();
+    res.send(req.user);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 module.exports = router;
