@@ -10,7 +10,9 @@ router.post("/user", async (req, res) => {
     const user = new User(req.body);
     await user.save(); //the user is actually also saved inside genereteAuthToken - try commenting this stmt out
     const token = await user.generateAuthToken();
-    res.status(201).send({ user, token });
+    const refresh = await user.generateRefreshToken();
+    await user.save();
+    res.status(201).send({ user, token, refreshToken: refresh });
   } catch (e) {
     if (e.code == 11000) {
       return res
@@ -28,7 +30,9 @@ router.post("/user/login", async (req, res) => {
       ...req.body,
     });
     const token = await user.generateAuthToken();
-    res.send({ user, token });
+    const refresh = await user.generateRefreshToken();
+    await user.save();
+    res.send({ user, token, refreshToken: refresh });
   } catch (e) {
     res.status(400).send(e.message || e);
   }
@@ -54,7 +58,7 @@ router.get("/user", auth, async (req, res) => {
     res.status(500).send(e);
   }
 });
-
+//API to update user details
 router.patch("/user", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = [
@@ -78,4 +82,5 @@ router.patch("/user", auth, async (req, res) => {
     res.status(500).send(e);
   }
 });
+
 module.exports = router;

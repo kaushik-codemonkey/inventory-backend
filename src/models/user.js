@@ -68,6 +68,9 @@ const schemaObj = {
       },
     },
   ],
+  refreshToken: {
+    type: String,
+  },
 };
 const userSchema = mongoose.Schema(schemaObj, {
   timestamps: true,
@@ -84,10 +87,28 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
-  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET);
-  user.tokens = user.tokens.concat({ token });
-  await user.save();
-  return token;
+  const accessToken = jwt.sign(
+    { _id: user._id.toString() },
+    process.env.AT_SECRET,
+    {
+      expiresIn: Number(process.env.AT_EXPIRY),
+    }
+  );
+  user.tokens = user.tokens.concat({ token: accessToken });
+  return accessToken;
+};
+
+userSchema.methods.generateRefreshToken = async function () {
+  const user = this;
+  const refreshToken = jwt.sign(
+    { _id: user._id.toString() },
+    process.env.RT_SECRET,
+    {
+      expiresIn: process.env.RT_EXPIRY,
+    }
+  );
+  user.refreshToken = refreshToken;
+  return refreshToken;
 };
 userSchema.statics.findByCredentials = async function ({ userName, password }) {
   const user = await User.findOne({ userName });
@@ -108,6 +129,7 @@ userSchema.methods.toJSON = function () {
   delete userObject.tokens;
   delete userObject.password;
   delete userObject.avatar;
+  delete userObject.refreshToken;
   return userObject;
 };
 
