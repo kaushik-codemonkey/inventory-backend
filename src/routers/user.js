@@ -11,7 +11,6 @@ router.post("/user", async (req, res) => {
     await user.save(); //the user is actually also saved inside genereteAuthToken - try commenting this stmt out
     const token = await user.generateAuthToken();
     const refresh = await user.generateRefreshToken();
-    await user.save();
     res.status(201).send({ user, token, refreshToken: refresh });
   } catch (e) {
     if (e.code == 11000) {
@@ -31,7 +30,6 @@ router.post("/user/login", async (req, res) => {
     });
     const token = await user.generateAuthToken();
     const refresh = await user.generateRefreshToken();
-    await user.save();
     res.send({ user, token, refreshToken: refresh });
   } catch (e) {
     res.status(400).send(e.message || e);
@@ -101,7 +99,6 @@ router.get("/refresh", async (req, res) => {
     const decoded = jwt.verify(refreshToken, process.env.RT_SECRET);
     let user = await User.findOne({ _id: decoded._id });
     const newAuthToken = await user.generateAuthToken();
-    user.save();
     return res.send({ token: newAuthToken, refreshToken });
   } catch (error) {
     res.status(500).send({ error });

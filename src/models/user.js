@@ -60,17 +60,6 @@ const schemaObj = {
         throw new Error("Should not contain the word 'password'");
     },
   },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
-  refreshToken: {
-    type: String,
-  },
 };
 const userSchema = mongoose.Schema(schemaObj, {
   timestamps: true,
@@ -94,7 +83,6 @@ userSchema.methods.generateAuthToken = async function () {
       expiresIn: Number(process.env.AT_EXPIRY),
     }
   );
-  user.tokens = user.tokens.concat({ token: accessToken });
   return accessToken;
 };
 
@@ -107,7 +95,6 @@ userSchema.methods.generateRefreshToken = async function () {
       expiresIn: Number(process.env.RT_EXPIRY),
     }
   );
-  user.refreshToken = refreshToken;
   return refreshToken;
 };
 userSchema.statics.findByCredentials = async function ({ userName, password }) {
@@ -126,10 +113,8 @@ userSchema.statics.findByCredentials = async function ({ userName, password }) {
 userSchema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
-  delete userObject.tokens;
   delete userObject.password;
   delete userObject.avatar;
-  delete userObject.refreshToken;
   return userObject;
 };
 
