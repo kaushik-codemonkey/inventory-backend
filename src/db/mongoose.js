@@ -3,13 +3,12 @@ const Items = require("../models/items");
 const User = require("../models/user");
 const connectionURL = process.env.MONGO_URL;
 mongoose.connect(connectionURL, async () => {
-  console.log("Migration started...");
   await loadInitialData();
-  console.log("Migration completed👍👍");
 });
 
 async function loadInitialData() {
   if (!!(await User.findOne({ userName: "sample_user" }))) return;
+  console.log("Migration started...");
   const user = await User.create({
     userName: "sample_user",
     email: "sample_user@gmail.com",
@@ -17,8 +16,6 @@ async function loadInitialData() {
     lastName: "user",
     password: "12345678",
   });
-  console.log(await User.findOne({ userName: "sample_user" }));
-
   if ((await Items.countDocuments().exec()) > 0) return;
   Promise.all([
     Items.create({
@@ -38,5 +35,6 @@ async function loadInitialData() {
       price: 120,
     }),
   ]);
+  console.log("Migration completed👍👍");
   return true;
 }
