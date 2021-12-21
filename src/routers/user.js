@@ -5,7 +5,7 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 //Sign up API - register user
 
-router.post("/user", async (req, res) => {
+router.post("", async (req, res) => {
   try {
     const user = new User(req.body);
     await user.save(); //the user is actually also saved inside genereteAuthToken - try commenting this stmt out
@@ -23,7 +23,7 @@ router.post("/user", async (req, res) => {
 });
 
 // Sign in API
-router.post("/user/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const user = await User.findByCredentials({
       ...req.body,
@@ -37,7 +37,7 @@ router.post("/user/login", async (req, res) => {
 });
 
 // Sign out API
-router.post("/user/logout", auth, async (req, res) => {
+router.post("/logout", auth, async (req, res) => {
   try {
     req.user.tokens = req.user.tokens?.filter(
       (token) => token.token !== req.token
@@ -49,7 +49,7 @@ router.post("/user/logout", auth, async (req, res) => {
   }
 });
 
-router.get("/user", auth, async (req, res) => {
+router.get("", auth, async (req, res) => {
   try {
     res.send(req.user);
   } catch (e) {
@@ -57,7 +57,7 @@ router.get("/user", auth, async (req, res) => {
   }
 });
 //API to update user details
-router.patch("/user", auth, async (req, res) => {
+router.patch("", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = [
     "email",
@@ -81,7 +81,7 @@ router.patch("/user", auth, async (req, res) => {
   }
 });
 //API to delete a user
-router.delete("/user", auth, async (req, res) => {
+router.delete("", auth, async (req, res) => {
   try {
     await req.user.remove();
     res.send(req.user);
