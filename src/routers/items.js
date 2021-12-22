@@ -23,12 +23,23 @@ router.get("/:itemId", auth, async (req, res) => {
 //Create new item
 router.post("", auth, async (req, res) => {
   try {
-    //Check if the itemName already exists - if exists - just update the price
+    //Check if the itemName already exists - if exists - just update the price & send 400 else 401 with item obj
+    const exisistingItem = await Items.findOneAndUpdate(
+      { name: req.body.name },
+      { ...req.body },
+      { returnOriginal: false }
+    );
+    if (exisistingItem)
+      return res
+        .status(400)
+        .send({ message: "Item price updated!", data: exisistingItem });
+    //
     const finalBody = { ...req.body };
     const item = new Items(finalBody);
     await item.save();
-    res.status(401).send(item);
+    return res.status(401).send({ message: "Item created!", data: item });
   } catch (e) {
+    console.log(e);
     res.status(500).send({ error: e });
   }
 });
