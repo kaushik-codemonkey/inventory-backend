@@ -2,7 +2,6 @@ const express = require("express");
 require("./db/mongoose");
 const userRouter = require("./routers/user");
 const itemsRouter = require("./routers/items");
-const User = require("./models/user");
 const rateLimit = require("express-rate-limit");
 const app = express();
 
