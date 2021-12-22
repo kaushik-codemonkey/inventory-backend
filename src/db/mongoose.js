@@ -21,18 +21,22 @@ async function loadInitialData() {
     Items.create({
       name: "Gingelly oil",
       price: 250,
+      createdBy: user._id,
     }),
     Items.create({
       name: "Cardomom",
       price: 220,
+      createdBy: user._id,
     }),
     Items.create({
       name: "Rice",
       price: 50,
+      createdBy: user._id,
     }),
     Items.create({
       name: "Groundnut oil",
       price: 120,
+      createdBy: user._id,
     }),
   ]);
   console.log("Migration completed👍👍");

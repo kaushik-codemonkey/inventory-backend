@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { USER_SCHEMA_NAME } = require("../constants");
 const schemaObj = {
   userName: {
     type: String,
@@ -118,6 +119,6 @@ userSchema.methods.toJSON = function () {
   return userObject;
 };
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model(USER_SCHEMA_NAME, userSchema);
 
 module.exports = User;
