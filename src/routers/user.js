@@ -3,6 +3,7 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 const User = require("../models/user");
 const { generateAccessTokenByRefreshToken } = require("../controller/user");
+const { errorMessage } = require("../constants");
 //Sign up API - register user
 
 router.post("", async (req, res) => {
@@ -18,7 +19,7 @@ router.post("", async (req, res) => {
         .status(400)
         .send({ error: "User Name already taken or User already exists" });
     }
-    res.status(400).send(e);
+    res.status(400).send({ success: false, error: errorMessage["5xx"] });
   }
 });
 
@@ -32,7 +33,7 @@ router.post("/login", async (req, res) => {
     const refresh = await user.generateRefreshToken();
     res.send({ user, token, refreshToken: refresh });
   } catch (e) {
-    res.status(400).send(e.message || e);
+    res.status(400).send({ success: false, error: errorMessage["5xx"] });
   }
 });
 
@@ -45,7 +46,7 @@ router.post("/logout", auth, async (req, res) => {
     await req.user.save();
     res.send();
   } catch (e) {
-    res.status(500).send(e);
+    res.status(500).send({ success: false, error: errorMessage["5xx"] });
   }
 });
 
@@ -53,7 +54,7 @@ router.get("", auth, async (req, res) => {
   try {
     res.send(req.user);
   } catch (e) {
-    res.status(500).send(e);
+    res.status(500).send({ success: false, error: errorMessage["5xx"] });
   }
 });
 //API to update user details
@@ -77,7 +78,7 @@ router.patch("", auth, async (req, res) => {
     await req.user.save();
     res.send(req.user);
   } catch (e) {
-    res.status(500).send(e);
+    res.status(500).send({ success: false, error: errorMessage["5xx"] });
   }
 });
 //API to delete a user
@@ -86,7 +87,7 @@ router.delete("", auth, async (req, res) => {
     await req.user.remove();
     res.send(req.user);
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send({ success: false, error: errorMessage["5xx"] });
   }
 });
 //API to get access token using refreshToken
@@ -94,7 +95,7 @@ router.get("/refresh", async (req, res) => {
   try {
     await generateAccessTokenByRefreshToken(req, res);
   } catch (error) {
-    res.status(500).send({ error });
+    res.status(500).send({ success: false, error: errorMessage["5xx"] });
   }
 });
 module.exports = router;
