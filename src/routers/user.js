@@ -6,7 +6,7 @@ const { generateAccessTokenByRefreshToken } = require("../controller/user");
 const { errorMessage } = require("../constants");
 //Sign up API - register user
 
-router.post("", async (req, res) => {
+router.post("/signup", async (req, res) => {
   try {
     const user = new User(req.body);
     await user.save(); //the user is actually also saved inside genereteAuthToken - try commenting this stmt out
